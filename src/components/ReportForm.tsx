@@ -20,6 +20,7 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
   const [customerCount, setCustomerCount] = useState("");
   const [nextFundraising, setNextFundraising] = useState<string | null>(null);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +44,7 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
       timestamp: new Date().toISOString().split("T")[0], // e.g., "2023-08-14",
     };
     console.log(report);
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`${host}/api/reports/`, {
@@ -54,18 +56,26 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
       });
 
       if (response.status == 400 || !response.ok) {
-        const data = await response.json();
-        setFormErrors(data);
-
-        console.log(formErrors);
-
-        return;
+        const error = await response.json();
+        setFormErrors(error);
+        throw new Error("Bad request", error);
       }
-
       onReportSubmit();
       console.log("Report submitted successfully!");
     } catch (error) {
       console.error("Error submitting report:", error);
+    } finally {
+      setRevenue("");
+      setCashBurn("");
+      setGrossProft("");
+      setEbitda("");
+      setCashOnHand("");
+      setCac("");
+      setAcv("");
+      setLtv("");
+      setCustomerCount("");
+      setNextFundraising(null);
+      setIsSubmitting(false);
     }
   };
 
@@ -218,7 +228,7 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={nextFundraising}
+            value={nextFundraising || ""}
             InputLabelProps={{
               shrink: true,
             }}
@@ -235,7 +245,7 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
           </div>
         ))}
         <Button variant="contained" color="primary" type="submit" size="large">
-          Submit Report
+          {isSubmitting ? "Submitting...." : "Submit Report"}
         </Button>
       </form>
     </Container>
