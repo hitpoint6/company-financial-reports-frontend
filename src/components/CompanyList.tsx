@@ -5,7 +5,8 @@ import { List, ListItem, ListItemText, Typography } from "@mui/material";
 const CompanyList: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const host = process.env.REACT_APP_BACKEND_FETCH_HOST || "";
-  console.log(host);
+  const [isloadded, setIsloadded] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     async function fetchCompanies() {
@@ -14,17 +15,22 @@ const CompanyList: React.FC = () => {
         const data = await response.json();
         setCompanies(data);
       } catch (error) {
+        setError("Error fetching companies");
         console.error("Error fetching companies:", error);
+      } finally {
+        setIsloadded(true);
       }
     }
     fetchCompanies();
-  }, []);
+  }, [host]);
 
   return (
     <>
       <Typography variant="h4" gutterBottom>
         Companies
       </Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      {!isloadded && <Typography>Loading...</Typography>}
       <List>
         {companies.map((company) => (
           <ListItem

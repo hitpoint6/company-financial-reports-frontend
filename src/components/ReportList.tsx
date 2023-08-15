@@ -10,6 +10,8 @@ interface Props {
 const ReportList: React.FC<Props> = ({ companyId, reportSubmitted }) => {
   const [reports, setReports] = useState<Report[]>([]);
   const host = process.env.REACT_APP_BACKEND_FETCH_HOST || "";
+  const [isloadded, setIsloadded] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     async function fetchReports() {
@@ -22,15 +24,17 @@ const ReportList: React.FC<Props> = ({ companyId, reportSubmitted }) => {
         const sortedData = data.sort((a: Report, b: Report) => {
           return b.id - a.id;
         });
-
         setReports(sortedData);
       } catch (error) {
+        setError("Error fetching reports");
         console.error("Error fetching reports:", error);
+      } finally {
+        setIsloadded(true);
       }
     }
 
     fetchReports();
-  }, [companyId, reportSubmitted]);
+  }, [companyId, reportSubmitted, host]);
 
   const formatDate = (date: string | null): string => {
     if (date === null) {
@@ -45,6 +49,8 @@ const ReportList: React.FC<Props> = ({ companyId, reportSubmitted }) => {
       <Typography variant="h5" gutterBottom>
         Reports for Company ID: {companyId}
       </Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      {!isloadded && <Typography>Loading...</Typography>}
       <List>
         {reports.map((report) => (
           <ListItem key={report.id}>

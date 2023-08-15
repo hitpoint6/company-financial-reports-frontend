@@ -9,18 +9,18 @@ interface Props {
 }
 
 const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
-  const [revenue, setRevenue] = useState("");
-  const [cashBurn, setCashBurn] = useState("");
-  const [grossProfit, setGrossProft] = useState("");
-  const [ebitda, setEbitda] = useState("");
-  const [cashOnHand, setCashOnHand] = useState("");
-  const [cac, setCac] = useState("");
-  const [acv, setAcv] = useState("");
-  const [ltv, setLtv] = useState("");
-  const [customerCount, setCustomerCount] = useState("");
+  const [revenue, setRevenue] = useState<string>("");
+  const [cashBurn, setCashBurn] = useState<string>("");
+  const [grossProfit, setGrossProft] = useState<string>("");
+  const [ebitda, setEbitda] = useState<string>("");
+  const [cashOnHand, setCashOnHand] = useState<string>("");
+  const [cac, setCac] = useState<string>("");
+  const [acv, setAcv] = useState<string>("");
+  const [ltv, setLtv] = useState<string>("");
+  const [customerCount, setCustomerCount] = useState<string>("");
   const [nextFundraising, setNextFundraising] = useState<string | null>(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,7 +55,7 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
         body: JSON.stringify(report),
       });
 
-      if (response.status == 400 || !response.ok) {
+      if (response.status === 400 || !response.ok) {
         const error = await response.json();
         setFormErrors(error);
         throw new Error("Bad request", error);
@@ -238,9 +238,7 @@ const ReportForm: React.FC<Props> = ({ companyId, onReportSubmit }) => {
         {Object.keys(formErrors).map((field, i) => (
           <div key={i}>
             {formErrors[field].map((errorMessage, j) => (
-              <span key={j} className="error">
-                {errorMessage}
-              </span>
+              <Typography color="error">{errorMessage}</Typography>
             ))}
           </div>
         ))}
