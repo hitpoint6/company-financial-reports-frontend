@@ -12,5 +12,4 @@ The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
 ### Deploy on vercel
-
-run `vercel` on a terminal
+Run `vercel` on a terminal
